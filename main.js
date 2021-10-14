@@ -1,28 +1,55 @@
 function add(num1, num2) {
-  return num1 + num2;
+  return parseFloat(num1 + num2);
 }
 
 function subtract(num1, num2) {
-  return num1 - num2;
+  return parseFloat(num1 - num2);
 }
 
 function multiply(num1, num2) {
-  return num1 * num2;
+  return parseFloat(num1 * num2);
 }
 
 function divide(num1, num2) {
-  return num1 / num2;
+  if (num2 == 0) {
+    return "Lmao";
+  }
+  return parseFloat(num1 / num2);
+}
+
+function toFixedIfNecessary(value, dp) {
+  return +parseFloat(value).toFixed(dp);
+}
+
+function checkIfTooBig(number) {
+  if (number.toString().length > 10) {
+    return "Too big";
+  } else {
+    return number;
+  }
 }
 
 function operate(num1, num2, operator) {
   if (operator == "+") {
-    console.log(add(num1, num2));
+    answer = add(parseFloat(num1), parseFloat(num2));
+    answer = toFixedIfNecessary(answer, 2);
+    answer = checkIfTooBig(answer);
+    return answer;
   } else if (operator == "-") {
-    console.log(subtract(num1, num2));
+    answer = subtract(num1, num2);
+    answer = toFixedIfNecessary(answer, 2);
+    answer = checkIfTooBig(answer);
+    return answer;
   } else if (operator == "*") {
-    console.log(multiply(num1, num2));
+    answer = multiply(num1, num2);
+    answer = toFixedIfNecessary(answer, 2);
+    answer = checkIfTooBig(answer);
+    return answer;
   } else if (operator == "/") {
-    console.log(divide(num1, num2));
+    answer = divide(num1, num2);
+    answer = toFixedIfNecessary(answer, 2);
+    answer = checkIfTooBig(answer);
+    return answer;
   }
 }
 
@@ -30,31 +57,86 @@ let buttons = document.querySelectorAll("button");
 let display = document.querySelector(".display");
 display.textContent = "0";
 
+let num1;
+function storeValue1(num) {
+  num1 = parseFloat(num);
+}
+
+let operator;
+function storeOperator(value) {
+  operator = value;
+}
+
+let triggerOnce;
+let triggerAC;
+let triggeredEqual;
+
 buttons.forEach((button) => {
   button.addEventListener("click", (e) => {
-    if (display.textContent.length > 9) {
-      return;
+    if (triggerOnce) {
+      display.textContent = "";
+      triggerOnce = false;
     }
 
-    if (!isNaN(display.textContent) && !isNaN(e.target.textContent)) {
-      if (display.textContent == "0") {
+    if (!isNaN(e.target.textContent) && display.textContent.length < 8) {
+      if (display.textContent == "0" || display.textContent == "Too big") {
         display.textContent = e.target.textContent;
       } else {
         display.textContent = display.textContent + e.target.textContent;
       }
     }
 
+    if (e.target.textContent == "=") {
+      if (triggerOnce == false) {
+        num2 = display.textContent;
+        display.textContent = operate(num1, num2, operator);
+        triggerOnce = false;
+        triggeredEqual = true;
+      }
+    }
+
     if (
-      isNaN(e.target.textContent) &&
-      e.target.textContent != "=" &&
-      e.target.textContent != "AC" &&
-      e.target.textContent != "+/-" &&
-      e.target.textContent != "."
+      e.target.textContent == "+" ||
+      e.target.textContent == "-" ||
+      e.target.textContent == "*" ||
+      e.target.textContent == "/"
     ) {
-      let operator = e.target.textContent;
-      temp = display.textContent;
-      console.log(temp);
-      let temp1 = true;
+      if (
+        triggerOnce == false &&
+        triggerAC == false &&
+        triggeredEqual == false
+      ) {
+        num2 = display.textContent;
+        display.textContent = operate(num1, num2, operator);
+      }
+      storeValue1(display.textContent);
+      storeOperator(e.target.textContent);
+      triggerOnce = true;
+      triggerAC = false;
+      triggeredEqual = false;
+    }
+
+    if (e.target.textContent == "+/-") {
+      if (parseInt(display.textContent) < 0) {
+        display.textContent = `${-display.textContent}`;
+      } else {
+        display.textContent = `${-display.textContent}`;
+      }
+    }
+
+    if (e.target.textContent == ".") {
+      if (!display.textContent.includes(".")) {
+        display.textContent = display.textContent + ".";
+      }
+    }
+
+    if (e.target.textContent == "%") {
+      display.textContent = operate(display.textContent, 100, "*");
+    }
+
+    if (e.target.textContent == "AC") {
+      display.textContent = "0";
+      triggerAC = true;
     }
   });
 });

@@ -47,6 +47,26 @@ button {
   background-color: lightyellow;
 }
 
+button:hover {
+  background-color: rgb(229, 229, 147);
+}
+
+button.AC:hover {
+  background-color: rgb(125, 205, 231);
+}
+
+button:active {
+  transform: translateY(2px);
+}
+
+button.topRight {
+  background-color: lightsalmon;
+}
+
+button.topRight:hover {
+  background-color: rgb(255, 141, 96);
+}
+
 .operator {
   display: flex;
   gap: 5px;
