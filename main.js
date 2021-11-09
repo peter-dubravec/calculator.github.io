@@ -71,72 +71,80 @@ let triggerOnce;
 let triggerAC;
 let triggeredEqual;
 
-buttons.forEach((button) => {
-  button.addEventListener("click", (e) => {
-    if (triggerOnce) {
-      display.textContent = "";
+function getNumber(e) {
+  if (display.textContent == "0" || display.textContent == "Too big") {
+    display.textContent = e.target.textContent;
+  } else {
+    display.textContent = display.textContent + e.target.textContent;
+  }
+}
+
+function getValue(e) {
+  if (e.target.textContent == "=") {
+    if (triggerOnce == false) {
+      num2 = display.textContent;
+      display.textContent = operate(num1, num2, operator);
       triggerOnce = false;
+      triggeredEqual = true;
     }
+  }
 
-    if (!isNaN(e.target.textContent) && display.textContent.length < 8) {
-      if (display.textContent == "0" || display.textContent == "Too big") {
-        display.textContent = e.target.textContent;
-      } else {
-        display.textContent = display.textContent + e.target.textContent;
-      }
+  if (
+    e.target.textContent == "+" ||
+    e.target.textContent == "-" ||
+    e.target.textContent == "*" ||
+    e.target.textContent == "/"
+  ) {
+    if (triggerOnce == false && triggerAC == false && triggeredEqual == false) {
+      num2 = display.textContent;
+      display.textContent = operate(num1, num2, operator);
     }
+    storeValue1(display.textContent);
+    storeOperator(e.target.textContent);
+    triggerOnce = true;
+    triggerAC = false;
+    triggeredEqual = false;
+  }
 
-    if (e.target.textContent == "=") {
-      if (triggerOnce == false) {
-        num2 = display.textContent;
-        display.textContent = operate(num1, num2, operator);
-        triggerOnce = false;
-        triggeredEqual = true;
-      }
+  if (e.target.textContent == "+/-") {
+    if (parseInt(display.textContent) < 0) {
+      display.textContent = `${-display.textContent}`;
+    } else {
+      display.textContent = `${-display.textContent}`;
     }
+  }
 
-    if (
-      e.target.textContent == "+" ||
-      e.target.textContent == "-" ||
-      e.target.textContent == "*" ||
-      e.target.textContent == "/"
-    ) {
-      if (
-        triggerOnce == false &&
-        triggerAC == false &&
-        triggeredEqual == false
-      ) {
-        num2 = display.textContent;
-        display.textContent = operate(num1, num2, operator);
-      }
-      storeValue1(display.textContent);
-      storeOperator(e.target.textContent);
-      triggerOnce = true;
-      triggerAC = false;
-      triggeredEqual = false;
+  if (e.target.textContent == ".") {
+    if (!display.textContent.includes(".")) {
+      display.textContent = display.textContent + ".";
     }
+  }
 
-    if (e.target.textContent == "+/-") {
-      if (parseInt(display.textContent) < 0) {
-        display.textContent = `${-display.textContent}`;
-      } else {
-        display.textContent = `${-display.textContent}`;
-      }
-    }
+  if (e.target.textContent == "%") {
+    display.textContent = operate(display.textContent, 100, "*");
+  }
 
-    if (e.target.textContent == ".") {
-      if (!display.textContent.includes(".")) {
-        display.textContent = display.textContent + ".";
-      }
-    }
+  if (e.target.textContent == "AC") {
+    display.textContent = "0";
+    triggerAC = true;
+    num1 = 0;
+  }
+}
 
-    if (e.target.textContent == "%") {
-      display.textContent = operate(display.textContent, 100, "*");
-    }
+function getTarget(e) {
+  if (triggerOnce) {
+    display.textContent = "";
+    triggerOnce = false;
+  }
+  if (!isNaN(e.target.textContent) && display.textContent.length < 8) {
+    getNumber(e);
+  }
 
-    if (e.target.textContent == "AC") {
-      display.textContent = "0";
-      triggerAC = true;
-    }
-  });
+  if (isNaN(e.target.textContent)) {
+    getValue(e);
+  }
+}
+
+buttons.forEach((button) => {
+  button.addEventListener("click", getTarget);
 });
