@@ -5,6 +5,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: "Red Hat Mono", "monospace";
 }
 
 .container {
@@ -17,15 +18,16 @@ body {
 }
 
 .top {
+  padding-top: 20px;
   width: 380px;
   height: 80px;
-  background-color: black;
+  background-color: rgb(46, 11, 11);
   border-radius: 5px;
   margin-bottom: 20px;
   flex-shrink: 0;
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .buttons {
@@ -82,6 +84,14 @@ button.one {
 
 .display {
   color: white;
-  font-size: 70px;
+  font-size: 50px;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.intermediateresult {
+  margin-top: -10px;
+  font-size: 20px;
+  color: white;
   margin-right: 10px;
 }
